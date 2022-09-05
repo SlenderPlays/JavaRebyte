@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.32014.148
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JavaRebyte.Core", ".\JavaRebyte.Core\JavaRebyte.Core.csproj", "{A757EB9F-D810-4600-8198-BA54245868C9}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JavaRebyte.Tests", ".\JavaRebyte.Tests\JavaRebyte.Tests.csproj", "{4DDFE8C3-156D-4AA7-AA40-D1EB5D125EA4}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{A757EB9F-D810-4600-8198-BA54245868C9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A757EB9F-D810-4600-8198-BA54245868C9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A757EB9F-D810-4600-8198-BA54245868C9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A757EB9F-D810-4600-8198-BA54245868C9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4DDFE8C3-156D-4AA7-AA40-D1EB5D125EA4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4DDFE8C3-156D-4AA7-AA40-D1EB5D125EA4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4DDFE8C3-156D-4AA7-AA40-D1EB5D125EA4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4DDFE8C3-156D-4AA7-AA40-D1EB5D125EA4}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {F7E6D913-0B36-4B8F-8EAF-3BF1A4492238}
+	EndGlobalSection
+EndGlobal
