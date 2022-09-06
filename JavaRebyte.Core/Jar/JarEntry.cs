@@ -14,24 +14,24 @@ namespace JavaRebyte.Core.Jar
 		/// Example: The path for the MANIFEST.MF file, found insiide teh META-INF folder is <c>META-INF/MANIFEST.MF</c>
 		/// <seealso cref="System.IO.Compression.ZipArchiveEntry.FullName"/>
 		/// </summary>
-		public string JarPath { get; set; }
-		public byte[] ByteContents { get; set; }
+		public string jarPath { get; set; }
+		public byte[] byteContents { get; set; }
 
 		private ZipArchiveEntry m_archiveEntry = null;
 
 		public JarEntry(string path)
 		{
-			this.JarPath = path;
+			this.jarPath = path;
 		}
 		public JarEntry(string path, byte[] inputBytes)
 		{
-			this.JarPath = path;
-			this.ByteContents = inputBytes;
+			this.jarPath = path;
+			this.byteContents = inputBytes;
 		}
 		public JarEntry(ZipArchiveEntry archiveEntry)
 		{
 			m_archiveEntry = archiveEntry;
-			JarPath = archiveEntry.FullName;
+			jarPath = archiveEntry.FullName;
 		}
 
 		/// <summary>
@@ -43,12 +43,12 @@ namespace JavaRebyte.Core.Jar
 			using (MemoryStream temp = new MemoryStream())
 			{
 				await inputStream.CopyToAsync(temp);
-				this.ByteContents = temp.ToArray();
+				this.byteContents = temp.ToArray();
 			}
 		}
 
 		/// <summary>
-		/// Reads the contents from the jar into the internal buffer (<see cref="ByteContents"/>), so that it this entry can be modified.
+		/// Reads the contents from the jar into the internal buffer (<see cref="byteContents"/>), so that it this entry can be modified.
 		/// This only works if the JarEntry has been created from a jar existing on disk or in memory.
 		/// If you want to read the contents from another source, use <see cref="ReadStreamAsync(Stream)"/>. Otherwise the method will throw <see cref="InvalidOperationException"/>.
 		/// </summary>

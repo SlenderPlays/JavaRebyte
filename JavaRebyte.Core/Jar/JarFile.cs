@@ -48,6 +48,56 @@ namespace JavaRebyte.Core.Jar
 			}
 		}
 
+		public MemoryStream WriteToMemory()
+		{
+			MemoryStream memoryStream = new MemoryStream();
+
+			using (var archive = new ZipArchive(memoryStream, ZipArchiveMode.Create, true))
+			{
+				// TODO: Handle classes differently, since they can be edited easily.
+				List<JarEntry> entries = new List<JarEntry>();
+				entries.AddRange(this.javaClassFiles);
+				entries.AddRange(this.auxiliaryFiles);
+
+				foreach (var item in entries)
+				{
+					var entryFile = archive.CreateEntry(item.jarPath);
+
+					if (item.byteContents == null)
+						item.ReadJarAsync().Wait();
+
+					using (var entryStream = entryFile.Open())
+					{
+						entryStream.Write(item.byteContents, 0, item.byteContents.Length);
+					}
+				}
+			}
+
+			memoryStream.Seek(0, SeekOrigin.Begin);
+			return memoryStream;
+		}
+
+		public void WriteToFile(string path)
+		{
+			using (var memoryStream = WriteToMemory())
+			{
+				using (var fileStream = new FileStream(path, FileMode.Create))
+				{
+					memoryStream.Seek(0, SeekOrigin.Begin);
+					memoryStream.CopyTo(fileStream);
+				}
+			}
+		}
+
+		public void WriteToStream(Stream outputStream)
+		{
+			using (var memoryStream = WriteToMemory())
+			{
+				memoryStream.Seek(0, SeekOrigin.Begin);
+				memoryStream.CopyTo(outputStream);
+			}
+		}
+
 		public void Dispose()
 		{
 			((IDisposable)m_archiveFile).Dispose();

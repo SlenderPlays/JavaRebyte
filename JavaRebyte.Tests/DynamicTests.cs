@@ -36,19 +36,16 @@ namespace JavaRebyte.Tests
 
 					foreach (var item in entries)
 					{
-						var demoFile = archive.CreateEntry(item.JarPath);
+						var demoFile = archive.CreateEntry(item.jarPath);
 
-						if(item.ByteContents == null)
+						if(item.byteContents == null)
 							item.ReadJarAsync().Wait();
 
 						using (var entryStream = demoFile.Open())
 						{
-							entryStream.Write(item.ByteContents, 0, item.ByteContents.Length);
+							entryStream.Write(item.byteContents, 0, item.byteContents.Length);
 						}
 					}
-
-					
-
 				}
 
 				using (var fileStream = new FileStream(Path.GetTempPath() + "test.jar", FileMode.Create))
