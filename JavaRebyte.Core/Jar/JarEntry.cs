@@ -15,7 +15,8 @@ namespace JavaRebyte.Core.Jar
 		/// <seealso cref="System.IO.Compression.ZipArchiveEntry.FullName"/>
 		/// </summary>
 		public string jarPath { get; set; }
-		public byte[] byteContents { get; set; }
+		public byte[] byteContents { get; set; } = null;
+		public bool IsRead => byteContents != null;
 
 		private ZipArchiveEntry m_archiveEntry = null;
 
@@ -50,6 +51,7 @@ namespace JavaRebyte.Core.Jar
 		/// <summary>
 		/// Reads the contents from the jar into the internal buffer (<see cref="byteContents"/>), so that it this entry can be modified.
 		/// This only works if the JarEntry has been created from a jar existing on disk or in memory.
+		/// <br/>
 		/// If you want to read the contents from another source, use <see cref="ReadStreamAsync(Stream)"/>. Otherwise the method will throw <see cref="InvalidOperationException"/>.
 		/// </summary>
 		/// <returns></returns>

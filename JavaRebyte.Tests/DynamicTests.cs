@@ -24,36 +24,8 @@ namespace JavaRebyte.Tests
 		[Fact]
 		public void TestEntry()
 		{
-			JarFile jarFile = new JarFile("./HelloWorldJava8.jar");
-
-			using (var memoryStream = new MemoryStream())
-			{
-				using (var archive = new ZipArchive(memoryStream, ZipArchiveMode.Create, true))
-				{
-					List<JarEntry> entries = new List<JarEntry>();
-					entries.AddRange(jarFile.javaClassFiles);
-					entries.AddRange(jarFile.auxiliaryFiles);
-
-					foreach (var item in entries)
-					{
-						var demoFile = archive.CreateEntry(item.jarPath);
-
-						if(item.byteContents == null)
-							item.ReadJarAsync().Wait();
-
-						using (var entryStream = demoFile.Open())
-						{
-							entryStream.Write(item.byteContents, 0, item.byteContents.Length);
-						}
-					}
-				}
-
-				using (var fileStream = new FileStream(Path.GetTempPath() + "test.jar", FileMode.Create))
-				{
-					memoryStream.Seek(0, SeekOrigin.Begin);
-					memoryStream.CopyTo(fileStream);
-				}
-			}
+			JarFile jarFile = new JarFile("./RebyteHello.jar");
+			jarFile.JavaClassFiles[0].DecompileClass();
 		}
 	}
 }

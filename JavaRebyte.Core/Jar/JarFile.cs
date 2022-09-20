@@ -13,8 +13,8 @@ namespace JavaRebyte.Core.Jar
 	{
 		public string jarFilePath { get; private set; }
 
-		public List<JavaClassFile> javaClassFiles = new List<JavaClassFile>();
-		public List<JarEntry> auxiliaryFiles = new List<JarEntry>();
+		public List<JavaClassFile> JavaClassFiles = new List<JavaClassFile>();
+		public List<JarEntry> AuxiliaryFiles = new List<JarEntry>();
 		
 		private ZipArchive m_archiveFile;
 
@@ -34,11 +34,11 @@ namespace JavaRebyte.Core.Jar
 				{
 					if (entry.Name.EndsWith(".class"))
 					{
-						javaClassFiles.Add(new JavaClassFile(entry));
+						JavaClassFiles.Add(new JavaClassFile(entry));
 					}
 					else
 					{
-						auxiliaryFiles.Add(new JarEntry(entry));
+						AuxiliaryFiles.Add(new JarEntry(entry));
 					}
 				}
 			}
@@ -56,14 +56,14 @@ namespace JavaRebyte.Core.Jar
 			{
 				// TODO: Handle classes differently, since they can be edited easily.
 				List<JarEntry> entries = new List<JarEntry>();
-				entries.AddRange(this.javaClassFiles);
-				entries.AddRange(this.auxiliaryFiles);
+				entries.AddRange(this.JavaClassFiles);
+				entries.AddRange(this.AuxiliaryFiles);
 
 				foreach (var item in entries)
 				{
 					var entryFile = archive.CreateEntry(item.jarPath);
 
-					if (item.byteContents == null)
+					if (!item.IsRead)
 						item.ReadJarAsync().Wait();
 
 					using (var entryStream = entryFile.Open())

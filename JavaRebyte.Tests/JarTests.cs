@@ -28,7 +28,7 @@ namespace JavaRebyte.Tests
 			JarFile jar = new JarFile(TEST_JAR_FILENAME);
 
 			// Read the data to test that `WriteToFile()` can write without re-reading file.
-			jar.javaClassFiles[0].ReadJarAsync().Wait();
+			jar.JavaClassFiles[0].ReadJarAsync().Wait();
 
 			string outFile = Path.GetTempFileName();
 			output.WriteLine(outFile);
