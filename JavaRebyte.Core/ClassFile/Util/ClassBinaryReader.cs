@@ -48,6 +48,21 @@ namespace JavaRebyte.Core.ClassFile.Util
 
 		}
 		
+		public virtual byte ReadByte()
+		{
+			byte[] buffer = new byte[1];
+			int bytesRead = m_stream.Read(buffer, 0, 1);
+
+			if (bytesRead < 1)
+				throw new EndOfStreamException();
+
+			return buffer[0];
+		}
+
+		public virtual sbyte ReadSByte()
+		{
+			return unchecked((sbyte)ReadByte());
+		}
 
 		protected virtual ReadOnlySpan<byte> InternalRead(int numBytes)
 		{
@@ -58,6 +73,11 @@ namespace JavaRebyte.Core.ClassFile.Util
 				throw new EndOfStreamException();
 
 			return new ReadOnlySpan<byte>(buffer);
+		}
+
+		internal string ReadString()
+		{
+			throw new NotImplementedException();
 		}
 	}
 }

@@ -9,20 +9,25 @@ namespace JavaRebyte.Core.Jar
 {
 	public class JavaClassFile : JarEntry
 	{
-		public DecompiledClassFile DecompiledClass { get; private set; } = null;
+		public const string FILE_SUFFIX = ".class";
 
+		public DecompiledClassFile DecompiledClass { get; private set; } = null;
 		public bool IsDecompiled => DecompiledClass != null;
+		public string fullClassName { get; private set; }
 
 		public JavaClassFile(string path) : base(path)
 		{
+			fullClassName = path.Substring(0,path.Length - FILE_SUFFIX.Length);
 		}
 
 		public JavaClassFile(ZipArchiveEntry archiveEntry) : base(archiveEntry)
 		{
+			fullClassName = this.jarPath.Substring(0, this.jarPath.Length - FILE_SUFFIX.Length);
 		}
 
 		public JavaClassFile(string path, byte[] inputBytes) : base(path, inputBytes)
 		{
+			fullClassName = path.Substring(0, path.Length - FILE_SUFFIX.Length);
 		}
 
 		/// <summary>

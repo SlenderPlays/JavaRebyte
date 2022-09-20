@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections;
+using System.Collections.Generic;
 
 namespace JavaRebyte.Core.ClassFile
 {
@@ -14,72 +16,33 @@ namespace JavaRebyte.Core.ClassFile
 	}
 
 	/// <summary>
-	/// https://docs.oracle.com/javase/specs/jvms/se18/html/jvms-4.html#jvms-4.4.7
+	/// This structure, as one might first believe, does not represent a 'string' <b>object</b> (<see cref="ConstantStringInfo"/>), instead
+	/// it represent a string, usually used by other entries in the constant pool to reference the names of classes, the signature of the method, the
+	/// name of a field, and a limitless number of things.<br/>
+	/// Reference: <see href="https://docs.oracle.com/javase/specs/jvms/se18/html/jvms-4.html#jvms-4.4.7"/>
 	/// </summary>
 	public class ConstantUTF8Info : ConstantPoolInfo
 	{
-		public ushort length { get; private set; }
-		public byte[] byteData { get; private set; }
-
-		protected string cachedString = "";
-		public string StringValue
-		{
-			get
-			{
-				if (!cacheValid)
-					CreateStringValueCache();
-				return cachedString;				
-			}
-		}
-
-		protected bool cacheValid = false;
+		public string stringValue;
 
 		public ConstantUTF8Info()
 		{
 			this.tag = ConstantPoolTag.UTF8;
 		}
 
-		public ConstantUTF8Info(ushort length, byte[] byteData)
+		public ConstantUTF8Info(string stringValue)
 		{
 			this.tag = ConstantPoolTag.UTF8;
-			SetData(length, byteData, true);
-		}
-
-		/// <summary>
-		/// Set the byte data of this UTF8-entry.
-		/// </summary>
-		/// <param name="length">Length of the string</param>
-		/// <param name="byteData">UTF8 string encoded acording to java specifications</param>
-		/// <param name="createCache">If set to true, the string value of the byte data will be interpreted now, and not when the string value is first requested.</param>
-		public void SetData(ushort length, byte[] byteData, bool createCache = false)
-		{
-			this.length = length;
-			this.byteData = byteData;
-			cacheValid = false;
-
-			if (createCache)
-				CreateStringValueCache();
-		}
-
-		/// <summary>
-		/// Sets the string value for this entry, and byteData will be automatically calculated.
-		/// </summary>
-		/// <param name="str"></param>
-		public void SetValue(string str)
-		{
-			throw new NotImplementedException();
-		}
-
-		protected void CreateStringValueCache()
-		{
-			throw new NotImplementedException();
-			cachedString = "something";
-			cacheValid = true;
+			this.stringValue = stringValue;
 		}
 	}
 
 	/// <summary>
-	/// https://docs.oracle.com/javase/specs/jvms/se18/html/jvms-4.html#jvms-4.4.4
+	/// Simple enough, it reprsents an integer. Thouuugh it represents an integer and NOT a short or a byte. <br/>
+	/// Constant shorts/bytes seem to be loaded onto the stuck using `bipush` and `sipush` (byte/shot as intger push).
+	/// Also the values -1 to 5 have special opcodes asigned to them to be pushed onto the stack.<br/>
+	/// Although, if a short/byte value is used often enough, the compiler MIGHT put it as a constant reference, though that is a guess. Testing is required.
+	/// Reference: <see href="https://docs.oracle.com/javase/specs/jvms/se18/html/jvms-4.html#jvms-4.4.4"/>
 	/// </summary>
 	public class ConstantIntegerInfo : ConstantPoolInfo
 	{
@@ -117,10 +80,16 @@ namespace JavaRebyte.Core.ClassFile
 	}
 
 	/// <summary>
-	/// https://docs.oracle.com/javase/specs/jvms/se18/html/jvms-4.html#jvms-4.4.1
+	/// This structure is used to represent a class or an interface. <br/>
+	/// Simply put, this structure is used for instanciating a new class (new <classinfo>) or used by other constant pool entries (or any other number of things). <br/>
+	/// Reference: <see href="https://docs.oracle.com/javase/specs/jvms/se18/html/jvms-4.html#jvms-4.4.1"/>
 	/// </summary>
 	public class ConstantClassInfo : ConstantPoolInfo
 	{
+		/// <summary>
+		/// Index of the <see cref="ConstantUTF8Info"/> entry which hold the name of the class/interface reference.<br/>
+		/// Index should be used on a 0-indexed collection, as opposed to how the specification calls for a 1-indexed collection.
+		/// </summary>
 		public ushort name_index;
 
 		public ConstantClassInfo()
@@ -133,5 +102,40 @@ namespace JavaRebyte.Core.ClassFile
 			this.tag = ConstantPoolTag.CLASS;
 			this.name_index = name_index;
 		}
+
+		/// <summary>
+		/// This is a shorthand for indexing a 0-indexed ConstantPoolInfo collection.
+		/// </summary>
+		/// <param name="constantPool">0-indexed collection which holds the constant pool information</param>
+		/// <returns>The UTF8 name of the referenced class/interface.</returns>
+		public ConstantUTF8Info GetName(IReadOnlyList<ConstantPoolInfo> constantPool)
+		{		
+			return (ConstantUTF8Info)constantPool[name_index];
+		}
 	}
+
+	/// <summary>
+	/// Holds a reference to a field. Unlike in regular Java, the 'reference' isn't to a particular field in an instance of
+	/// a class, but rather it just points to a field inside a class (not a specific instance).<br/>
+	/// The opcodes 'putfield' and 'getfield' take both an instance and a FieldReference. <br/>
+	/// The opcodes 'getstatic' and 'putstatic' do not need an attached instance since they operate on static (and thus instance-independent) fields.
+	/// Reference: <see href="https://docs.oracle.com/javase/specs/jvms/se18/html/jvms-4.html#jvms-4.4.2"/>
+	/// </summary>
+	public class ConstantFieldReferenceInfo : ConstantPoolInfo
+	{
+		/// <summary>
+		/// Index of the <see cref="ConstantClassInfo"/> entry which holds the class/interface of this field reference.<br/>
+		/// Index should be used on a 0-indexed collection, as opposed to how the specification calls for a 1-indexed collection.
+		/// </summary>
+		public ushort class_index;
+		/// <summary>
+		/// Index of the <see cref="ConstantNameAndTypeInfo"/> entry this field reference.<br/>
+		/// Index should be used on a 0-indexed collection, as opposed to how the specification calls for a 1-indexed collection.
+		/// </summary>
+		public ushort name_and_type_index;
+	}
+
+	public class ConstantNameAndTypeInfo : ConstantClassInfo
+	{ }
+
 }

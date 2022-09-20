@@ -57,9 +57,21 @@ namespace JavaRebyte.Core.ClassFile
             }
 		}
         #region File Reading
-        protected virtual void ReadConstantPoolEntry(ClassBinaryReader reader)
+        protected virtual ConstantPoolInfo ReadConstantPoolEntry(ClassBinaryReader reader)
 		{
-
+            ConstantPoolTag tag = (ConstantPoolTag)reader.ReadByte();
+            switch (tag)
+			{
+                case ConstantPoolTag.UTF8:
+                    return new ConstantUTF8Info(reader.ReadString());
+                case ConstantPoolTag.INTEGER:
+                    return new ConstantIntegerInfo(reader.ReadInt());
+                case ConstantPoolTag.FLOAT:
+                    return new ConstantFloatInfo(reader.ReadFloat());
+                case ConstantPoolTag.CLASS:
+                    return new ConstantClassInfo((ushort)(reader.ReadUShort() - 1));
+                default: throw new DecompilationException($"Encountered an unknown ConstantPoolTag: {tag} | {(byte)tag}");
+			}
 		}
         #endregion
     }

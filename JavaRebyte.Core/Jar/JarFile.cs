@@ -98,6 +98,22 @@ namespace JavaRebyte.Core.Jar
 			}
 		}
 
+		/// <summary>
+		/// Returns a <see cref="JavaClassFile"/> by its FULL name. <br/>
+		/// For example, a class named "MyClass" in the package "com.example.tests" would have the name <b>com/example/tests/MyClass</b> 
+		/// </summary>
+		/// <param name="fullClassName"></param>
+		/// <returns></returns>
+		public JavaClassFile GetClassFromName(string fullClassName)
+		{
+			foreach (var javaClass in JavaClassFiles)
+			{
+				if(javaClass.fullClassName == fullClassName)
+					return javaClass;
+			}
+			return null;
+		}
+
 		public void Dispose()
 		{
 			((IDisposable)m_archiveFile).Dispose();

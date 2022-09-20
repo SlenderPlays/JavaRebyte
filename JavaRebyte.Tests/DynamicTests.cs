@@ -25,7 +25,7 @@ namespace JavaRebyte.Tests
 		public void TestEntry()
 		{
 			JarFile jarFile = new JarFile("./RebyteHello.jar");
-			jarFile.JavaClassFiles[0].DecompileClass();
+			jarFile.GetClassFromName("rebyte/helloworld/Constants").DecompileClass();
 		}
 	}
 }

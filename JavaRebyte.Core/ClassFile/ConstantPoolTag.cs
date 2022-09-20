@@ -6,7 +6,7 @@ namespace JavaRebyte.Core.ClassFile
 {
 	/// <summary>
 	/// The tag (byte) which specifies the type of constnat being stored in this ConstantPool entry. <br/>
-	/// Reference: https://docs.oracle.com/javase/specs/jvms/se18/html/jvms-4.html#jvms-4.4-210
+	/// Reference: <see href="https://docs.oracle.com/javase/specs/jvms/se18/html/jvms-4.html#jvms-4.4-210"/>
 	/// </summary>
 	public enum ConstantPoolTag : byte
 	{

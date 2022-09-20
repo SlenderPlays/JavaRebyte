@@ -71,7 +71,7 @@ if($command -eq "help") {
     Write-Output "compile -> Compiles the files inside the 'src' directory, and outputs the class files to 'out/compiled'."
     Write-Output "jar     -> Builds the compiled files from 'out/compiled' and outputs a jar into 'out/jar'"
     Write-Output "build   -> Runs 'compile', then 'jar'."
-    Write-Output "deloy   -> Builds the jar, then copies the output to 'JavaRebyte.Tests' so that it can be used in tests."
+    Write-Output "deploy  -> Builds the jar, then copies the output to 'JavaRebyte.Tests' so that it can be used in tests."
     Write-Output ""
     Write-Output "Paramater '-Clean'"
     Write-Output "--------------------"
