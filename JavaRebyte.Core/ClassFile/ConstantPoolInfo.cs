@@ -6,6 +6,7 @@ namespace JavaRebyte.Core.ClassFile
 {
 	public class ConstantPoolInfo
 	{
+		// TODO: Remove?
 		public ConstantPoolTag tag = ConstantPoolTag.NONE;
 
 		public ConstantPoolInfo() { }
@@ -38,7 +39,7 @@ namespace JavaRebyte.Core.ClassFile
 	}
 
 	/// <summary>
-	/// Simple enough, it reprsents an integer. Thouuugh it represents an integer and NOT a short or a byte. <br/>
+	/// Simple enough, it represents an integer. Thouuugh it usually represents an integer and NOT a short or a byte. <br/>
 	/// Constant shorts/bytes seem to be loaded onto the stuck using `bipush` and `sipush` (byte/shot as intger push).
 	/// Also the values -1 to 5 have special opcodes asigned to them to be pushed onto the stack.<br/>
 	/// Although, if a short/byte value is used often enough, the compiler MIGHT put it as a constant reference, though that is a guess. Testing is required.
@@ -61,7 +62,7 @@ namespace JavaRebyte.Core.ClassFile
 	}
 
 	/// <summary>
-	/// https://docs.oracle.com/javase/specs/jvms/se18/html/jvms-4.html#jvms-4.4.4
+	/// Reference: <see href="https://docs.oracle.com/javase/specs/jvms/se18/html/jvms-4.html#jvms-4.4.4"/>
 	/// </summary>
 	public class ConstantFloatInfo : ConstantPoolInfo
 	{
@@ -81,7 +82,7 @@ namespace JavaRebyte.Core.ClassFile
 
 	/// <summary>
 	/// This structure is used to represent a class or an interface. <br/>
-	/// Simply put, this structure is used for instanciating a new class (new <classinfo>) or used by other constant pool entries (or any other number of things). <br/>
+	/// Simply put, this structure is used for instantiating a new class (new <classinfo>) or used by other constant pool entries (or any other number of things). <br/>
 	/// Reference: <see href="https://docs.oracle.com/javase/specs/jvms/se18/html/jvms-4.html#jvms-4.4.1"/>
 	/// </summary>
 	public class ConstantClassInfo : ConstantPoolInfo
@@ -129,13 +130,91 @@ namespace JavaRebyte.Core.ClassFile
 		/// </summary>
 		public ushort class_index;
 		/// <summary>
-		/// Index of the <see cref="ConstantNameAndTypeInfo"/> entry this field reference.<br/>
+		/// Index of the <see cref="ConstantNameAndTypeInfo"/> entry this field reference. The descriptor (type) must be of type "FieldDescriptor".<br/>
 		/// Index should be used on a 0-indexed collection, as opposed to how the specification calls for a 1-indexed collection.
 		/// </summary>
 		public ushort name_and_type_index;
+
+		public ConstantFieldReferenceInfo()
+		{
+			this.tag = ConstantPoolTag.FIELD_REF;
+		}
+
+		public ConstantFieldReferenceInfo(ushort class_index, ushort name_and_type_index)
+		{
+			this.tag = ConstantPoolTag.FIELD_REF;
+			this.class_index = class_index;
+			this.name_and_type_index = name_and_type_index;
+		}
 	}
 
-	public class ConstantNameAndTypeInfo : ConstantClassInfo
-	{ }
+	/// <summary>
+	/// Holds a reference to a method. Basically a function pointer. 
+	/// Reference: <see href="https://docs.oracle.com/javase/specs/jvms/se18/html/jvms-4.html#jvms-4.4.2"/>
+	/// </summary>
+	public class ConstantMethodReferenceInfo : ConstantPoolInfo
+	{
+		/// <summary>
+		/// Index of the <see cref="ConstantClassInfo"/> entry which holds the class <b>(not interface)</b> of this method reference.<br/>
+		/// Index should be used on a 0-indexed collection, as opposed to how the specification calls for a 1-indexed collection.
+		/// </summary>
+		public ushort class_index;
+		/// <summary>
+		/// Index of the <see cref="ConstantNameAndTypeInfo"/> entry this field reference. <br/>
+		/// The descriptor (type) must be of type "MethodDescriptor". <br/>
+		/// If the name begins with a '<' ('\u003c'), then the name must be the special name <init>, representing an instance initialization method.
+		/// The return type of such a method must be void. <br/>
+		/// Index should be used on a 0-indexed collection, as opposed to how the specification calls for a 1-indexed collection.
+		/// </summary>
+		public ushort name_and_type_index;
 
+		public ConstantMethodReferenceInfo()
+		{
+			this.tag= ConstantPoolTag.METHOD_REF;
+		}
+
+		public ConstantMethodReferenceInfo(ushort class_index, ushort name_and_type_index)
+		{
+			this.tag = ConstantPoolTag.METHOD_REF;
+			this.class_index = class_index;
+			this.name_and_type_index = name_and_type_index;
+		}
+	}
+
+	/// <summary>
+	/// Holds a reference to a method belonging to an interface. Basically a function pointer... but for interfaces. 
+	/// Reference: <see href="https://docs.oracle.com/javase/specs/jvms/se18/html/jvms-4.html#jvms-4.4.2"/>
+	/// </summary>
+	public class ConstantInterfaceMethodReferenceInfo : ConstantPoolInfo
+	{
+		/// <summary>
+		/// Index of the <see cref="ConstantClassInfo"/> entry which holds the interface <b>(not class)</b> of this method reference.<br/>
+		/// Index should be used on a 0-indexed collection, as opposed to how the specification calls for a 1-indexed collection.
+		/// </summary>
+		public ushort class_index;
+		/// <summary>
+		/// Index of the <see cref="ConstantNameAndTypeInfo"/> entry this field reference. <br/>
+		/// The descriptor (type) must be of type "MethodDescriptor". <br/>
+		/// Index should be used on a 0-indexed collection, as opposed to how the specification calls for a 1-indexed collection.
+		/// </summary>
+		public ushort name_and_type_index;
+
+		public ConstantInterfaceMethodReferenceInfo()
+		{
+			this.tag = ConstantPoolTag.INTERFACE_METHOD_REF;
+		}
+
+		public ConstantInterfaceMethodReferenceInfo(ushort class_index, ushort name_and_type_index)
+		{
+			this.tag = ConstantPoolTag.INTERFACE_METHOD_REF;
+			this.class_index = class_index;
+			this.name_and_type_index = name_and_type_index;
+		}
+	}
+
+
+	public class ConstantNameAndTypeInfo : ConstantClassInfo
+	{
+
+	}
 }
