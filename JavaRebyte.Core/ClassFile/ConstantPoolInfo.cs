@@ -4,16 +4,17 @@ using System.Collections.Generic;
 
 namespace JavaRebyte.Core.ClassFile
 {
-	public class ConstantPoolInfo
+	/// <summary>
+	/// An entry into the Constant Pool. This class and all classes that inherit from this should be treated as "data-holders", they represent what was
+	/// written in a java class file and little more. Auxiliary methods are welcome, though reading/writing should be handeled by <see cref="ClassFile.Util.ClassBinaryReader"/>.
+	/// </summary>
+	public abstract class ConstantPoolInfo
 	{
-		// TODO: Remove?
-		public ConstantPoolTag tag = ConstantPoolTag.NONE;
-
-		public ConstantPoolInfo() { }
-		public ConstantPoolInfo(ConstantPoolTag tag)
-		{
-			this.tag = tag;
-		}
+		// TODO: if needed in the future, implement this. A static method with a switch state could also suffice for more central code.
+		// public virtual ConstantPoolTag GetTag()
+		// {
+		//	return ConstantPoolTag.NONE;
+		// }
 	}
 
 	/// <summary>
@@ -26,14 +27,10 @@ namespace JavaRebyte.Core.ClassFile
 	{
 		public string stringValue;
 
-		public ConstantUTF8Info()
-		{
-			this.tag = ConstantPoolTag.UTF8;
-		}
+		public ConstantUTF8Info() { }
 
 		public ConstantUTF8Info(string stringValue)
 		{
-			this.tag = ConstantPoolTag.UTF8;
 			this.stringValue = stringValue;
 		}
 	}
@@ -49,14 +46,10 @@ namespace JavaRebyte.Core.ClassFile
 	{
 		public int value;
 
-		public ConstantIntegerInfo()
-		{
-			this.tag = ConstantPoolTag.INTEGER;
-		}
+		public ConstantIntegerInfo() { }
 
 		public ConstantIntegerInfo(int value)
 		{
-			this.tag = ConstantPoolTag.INTEGER;
 			this.value = value;
 		}
 	}
@@ -68,14 +61,10 @@ namespace JavaRebyte.Core.ClassFile
 	{
 		public float value;
 
-		public ConstantFloatInfo()
-		{
-			this.tag = ConstantPoolTag.FLOAT;
-		}
+		public ConstantFloatInfo() { }
 
 		public ConstantFloatInfo(float value)
 		{
-			this.tag = ConstantPoolTag.FLOAT;
 			this.value = value;
 		}
 	}
@@ -89,21 +78,18 @@ namespace JavaRebyte.Core.ClassFile
 	{
 		/// <summary>
 		/// Index of the <see cref="ConstantUTF8Info"/> entry which hold the name of the class/interface reference.<br/>
-		/// Index should be used on a 0-indexed collection, as opposed to how the specification calls for a 1-indexed collection.
+		/// Reminder: constant pool is 1-indexed.
 		/// </summary>
 		public ushort name_index;
 
-		public ConstantClassInfo()
-		{
-			this.tag = ConstantPoolTag.CLASS;
-		}
+		public ConstantClassInfo() { }
 
 		public ConstantClassInfo(ushort name_index)
 		{
-			this.tag = ConstantPoolTag.CLASS;
 			this.name_index = name_index;
 		}
 
+		// TODO: Look at this - do we need this?
 		/// <summary>
 		/// This is a shorthand for indexing a 0-indexed ConstantPoolInfo collection.
 		/// </summary>
@@ -126,23 +112,19 @@ namespace JavaRebyte.Core.ClassFile
 	{
 		/// <summary>
 		/// Index of the <see cref="ConstantClassInfo"/> entry which holds the class/interface of this field reference.<br/>
-		/// Index should be used on a 0-indexed collection, as opposed to how the specification calls for a 1-indexed collection.
+		/// Reminder: constant pool is 1-indexed.
 		/// </summary>
 		public ushort class_index;
 		/// <summary>
 		/// Index of the <see cref="ConstantNameAndTypeInfo"/> entry this field reference. The descriptor (type) must be of type "FieldDescriptor".<br/>
-		/// Index should be used on a 0-indexed collection, as opposed to how the specification calls for a 1-indexed collection.
+		/// Reminder: constant pool is 1-indexed.
 		/// </summary>
 		public ushort name_and_type_index;
 
-		public ConstantFieldReferenceInfo()
-		{
-			this.tag = ConstantPoolTag.FIELD_REF;
-		}
+		public ConstantFieldReferenceInfo() { }
 
 		public ConstantFieldReferenceInfo(ushort class_index, ushort name_and_type_index)
 		{
-			this.tag = ConstantPoolTag.FIELD_REF;
 			this.class_index = class_index;
 			this.name_and_type_index = name_and_type_index;
 		}
@@ -156,7 +138,7 @@ namespace JavaRebyte.Core.ClassFile
 	{
 		/// <summary>
 		/// Index of the <see cref="ConstantClassInfo"/> entry which holds the class <b>(not interface)</b> of this method reference.<br/>
-		/// Index should be used on a 0-indexed collection, as opposed to how the specification calls for a 1-indexed collection.
+		/// Reminder: constant pool is 1-indexed.
 		/// </summary>
 		public ushort class_index;
 		/// <summary>
@@ -164,18 +146,14 @@ namespace JavaRebyte.Core.ClassFile
 		/// The descriptor (type) must be of type "MethodDescriptor". <br/>
 		/// If the name begins with a '<' ('\u003c'), then the name must be the special name <init>, representing an instance initialization method.
 		/// The return type of such a method must be void. <br/>
-		/// Index should be used on a 0-indexed collection, as opposed to how the specification calls for a 1-indexed collection.
+		/// Reminder: constant pool is 1-indexed.
 		/// </summary>
 		public ushort name_and_type_index;
 
-		public ConstantMethodReferenceInfo()
-		{
-			this.tag= ConstantPoolTag.METHOD_REF;
-		}
+		public ConstantMethodReferenceInfo() { }
 
 		public ConstantMethodReferenceInfo(ushort class_index, ushort name_and_type_index)
 		{
-			this.tag = ConstantPoolTag.METHOD_REF;
 			this.class_index = class_index;
 			this.name_and_type_index = name_and_type_index;
 		}
@@ -189,24 +167,20 @@ namespace JavaRebyte.Core.ClassFile
 	{
 		/// <summary>
 		/// Index of the <see cref="ConstantClassInfo"/> entry which holds the interface <b>(not class)</b> of this method reference.<br/>
-		/// Index should be used on a 0-indexed collection, as opposed to how the specification calls for a 1-indexed collection.
+		/// Reminder: constant pool is 1-indexed.
 		/// </summary>
 		public ushort class_index;
 		/// <summary>
 		/// Index of the <see cref="ConstantNameAndTypeInfo"/> entry this field reference. <br/>
 		/// The descriptor (type) must be of type "MethodDescriptor". <br/>
-		/// Index should be used on a 0-indexed collection, as opposed to how the specification calls for a 1-indexed collection.
+		/// Reminder: constant pool is 1-indexed.
 		/// </summary>
 		public ushort name_and_type_index;
 
-		public ConstantInterfaceMethodReferenceInfo()
-		{
-			this.tag = ConstantPoolTag.INTERFACE_METHOD_REF;
-		}
+		public ConstantInterfaceMethodReferenceInfo() { }
 
 		public ConstantInterfaceMethodReferenceInfo(ushort class_index, ushort name_and_type_index)
 		{
-			this.tag = ConstantPoolTag.INTERFACE_METHOD_REF;
 			this.class_index = class_index;
 			this.name_and_type_index = name_and_type_index;
 		}
