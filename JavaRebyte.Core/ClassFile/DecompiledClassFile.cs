@@ -51,7 +51,7 @@ namespace JavaRebyte.Core.ClassFile
 				// constant_pool.Add(new ConstantPoolInfo());
 				for (int i = 1; i <= constant_pool_count; i++)
 				{
-                    ReadConstantPoolEntry(reader);
+                    constant_pool.Add(ReadConstantPoolEntry(reader));
 				}
 
             }
@@ -69,7 +69,15 @@ namespace JavaRebyte.Core.ClassFile
                 case ConstantPoolTag.FLOAT:
                     return new ConstantFloatInfo(reader.ReadFloat());
                 case ConstantPoolTag.CLASS:
-                    return new ConstantClassInfo((ushort)(reader.ReadUShort() - 1));
+                    return new ConstantClassInfo(reader.ReadUShort());
+                case ConstantPoolTag.FIELD_REF:
+                    return new ConstantFieldReferenceInfo(reader.ReadUShort(), reader.ReadUShort());
+                case ConstantPoolTag.METHOD_REF:
+                    return new ConstantMethodReferenceInfo(reader.ReadUShort(), reader.ReadUShort());
+                case ConstantPoolTag.INTERFACE_METHOD_REF:
+                    return new ConstantInterfaceMethodReferenceInfo(reader.ReadUShort(), reader.ReadUShort());
+                case ConstantPoolTag.NAME_AND_TYPE:
+                    return new ConstantNameAndTypeInfo(reader.ReadUShort(), reader.ReadUShort());
                 default: throw new DecompilationException($"Encountered an unknown ConstantPoolTag: {tag} | {(byte)tag}");
 			}
 		}

@@ -75,7 +75,7 @@ namespace JavaRebyte.Core.ClassFile.Util
 			return new ReadOnlySpan<byte>(buffer);
 		}
 
-		internal string ReadString()
+		public string ReadString()
 		{
 			throw new NotImplementedException();
 		}

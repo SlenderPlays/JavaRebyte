@@ -186,9 +186,31 @@ namespace JavaRebyte.Core.ClassFile
 		}
 	}
 
-
-	public class ConstantNameAndTypeInfo : ConstantClassInfo
+	/// <summary>
+	/// The structure is used to represent a field's or method's name and the type, without indicating which class or interface it belongs to.
+	/// Reference <see href="https://docs.oracle.com/javase/specs/jvms/se18/html/jvms-4.html#jvms-4.4.6"/>
+	/// </summary>
+	public class ConstantNameAndTypeInfo : ConstantPoolInfo
 	{
+		/// <summary>
+		/// The constant_pool entry at that index must be a <see cref="ConstantUTF8Info"/> structure representing either a valid unqualified name denoting
+		/// a field, method, or the special method name <init>.
+		/// </summary>
+		public ushort name_index;
 
+		/// <summary>
+		/// The constant_pool entry at that index must be a <see cref="ConstantUTF8Info"/> structure representing a valid field descriptor or method descriptor.
+		/// </summary>
+		public ushort descriptor_index;
+
+		public ConstantNameAndTypeInfo()
+		{
+		}
+
+		public ConstantNameAndTypeInfo(ushort name_index, ushort descriptor_index)
+		{
+			this.name_index = name_index;
+			this.descriptor_index = descriptor_index;
+		}
 	}
 }
