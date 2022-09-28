@@ -16,11 +16,22 @@ namespace JavaRebyte.Tests
 		[InlineData("€")]
 		[InlineData("𐍈")]
 		[InlineData("𐍈€$£𐍈€$£𐍈")]
-		public void TestReEncodeing(string original)
+		public void TestReEncoding(string original)
 		{
 			var encoded = ModifiedUTF8.GetBytes(original);
 			var reEncoded = ModifiedUTF8.GetString(encoded);
 			Assert.Equal(original, reEncoded);
+		}
+
+		[Fact]
+		public void StressReEncoding()
+		{
+			StringBuilder sb = new StringBuilder();
+			for (int i = 0; i < 10000_000; i++)
+			{
+				sb.Append("a𐍈");
+			}
+			TestReEncoding(sb.ToString());
 		}
 	}
 }

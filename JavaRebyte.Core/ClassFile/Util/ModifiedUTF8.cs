@@ -72,11 +72,32 @@ namespace JavaRebyte.Core.ClassFile.Util
 					));
 					i += 3;
 				}
-				// 4-byte version does not exist. Instead we have a 6-byte version.
-				// Java claims this is a "UTF-16 surrogate" but IDK what they are on about because UTF-16 encodes
-				// either 2 bytes or 4 bytes, and not 6 bytes.
+				// 4-byte version does not exist. Instead we have a 6-byte version that Java claims is a 'UTF16' surrogate pair.
+				// TODO: Remove this
+				// This code is unreachable because the before if statemnt catches 100% of the time. The reason the code still
+				// works even though it this seems like a entirely made-up encoding scheme is because this is just 2 chars
+				// that are encoded in UTF-16 that are then stored in the UTF-8 format.
+				//
+				// Here is the "pattern" for MUTF8:
 				// 11101101 1010xxxx 10xxxxxx
 				// 11101101 1011xxxx 10xxxxxx
+				//
+				// But actually this is just the regular UTF8 pattern applied TWICE, with some bits hard-set:
+				// 1110[1101] 10[10]yyyy 10yyyyyy
+				// 1110[1101] 10[11]xxxx 10xxxxxx
+				//
+				// But once we actually extract the data bits:
+				// 110110_yyyy_yyyyyy
+				// 110111_xxxx_xxxxxx
+				//
+				// But this actually is just the UTF-16 format code.
+				// And because C# uses UTF-16 for strings this actually just straight-up decodes perfectly.
+				// The high surrogate is read and cast as a char, then the low surrogate does the same, forming our 'char'
+				//
+				// This is both strange and marvelous, why would Java use UTF8 for 7-16 bits of data and UTF16 for 20 bits of data, and not
+				// just straight-up only UTF-16 like C# (though it can overstore in 2 bytes what could be stored in 1),
+				// or just UTF-8 (which can overstore in 3 bytes what could be stored in 2).
+				// Though to give credit, this makes it easier to go from their format to UTF16. Otherwise, Java is still very strange.
 				else if (bytes[i] == 0b11101101 &&
 						(bytes[i + 1] & 0b1111_0000) == 0b1010_0000 &&
 						(bytes[i + 2] & 0b1100_0000) == 0b1000_0000 &&
