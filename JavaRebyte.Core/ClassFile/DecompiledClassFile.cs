@@ -15,6 +15,7 @@ namespace JavaRebyte.Core.ClassFile
 		public ushort major_version;
 
 		public ushort constant_pool_count;
+        // TODO: Replace with ConstantPool object
         public List<ConstantPoolInfo> constant_pool = new List<ConstantPoolInfo>();
 
         public ushort access_flags;
@@ -49,7 +50,7 @@ namespace JavaRebyte.Core.ClassFile
 
 				// Constant pool start at index 1, for reasons unknown to all
 				// constant_pool.Add(new ConstantPoolInfo());
-				for (int i = 1; i <= constant_pool_count; i++)
+				for (int i = 1; i < constant_pool_count; i++)
 				{
                     constant_pool.Add(ReadConstantPoolEntry(reader));
 				}

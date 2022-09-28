@@ -64,6 +64,17 @@ namespace JavaRebyte.Core.ClassFile.Util
 			return unchecked((sbyte)ReadByte());
 		}
 
+		public virtual byte[] ReadBytes(int numBytes)
+		{
+			byte[] buffer = new byte[numBytes];
+			int bytesRead = m_stream.Read(buffer, 0, numBytes);
+
+			if (bytesRead < numBytes)
+				throw new EndOfStreamException();
+
+			return buffer;
+		}
+
 		protected virtual ReadOnlySpan<byte> InternalRead(int numBytes)
 		{
 			byte[] buffer = new byte[numBytes];
@@ -77,7 +88,8 @@ namespace JavaRebyte.Core.ClassFile.Util
 
 		public string ReadString()
 		{
-			throw new NotImplementedException();
+			ushort len = ReadUShort();
+			return ModifiedUTF8.GetString(ReadBytes(len));
 		}
 	}
 }
