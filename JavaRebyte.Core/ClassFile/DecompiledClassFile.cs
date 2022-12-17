@@ -15,16 +15,17 @@ namespace JavaRebyte.Core.ClassFile
 		public ushort major_version;
 
 		public ushort constant_pool_count;
-        // TODO: Replace with ConstantPool object
-        public List<ConstantPoolInfo> constant_pool = new List<ConstantPoolInfo>();
+        public ConstantPool constant_pool = new ConstantPool();
 
-        public ushort access_flags;
+        public ClassAccessFlags access_flags;
         public ushort this_class;
+        public ConstantClassInfo ThisClass => (ConstantClassInfo)constant_pool[this_class];
         public ushort super_class;
+        public ConstantClassInfo SuperClass => (ConstantClassInfo)constant_pool[super_class];
 
         public ushort interfaces_count;
         public List<ushort> interfaces = new List<ushort>();
-
+        
         public ushort fields_count;
         public List<JavaFieldInfo> fields = new List<JavaFieldInfo>();
 
@@ -54,6 +55,22 @@ namespace JavaRebyte.Core.ClassFile
 			{
 				constant_pool.Add(ReadConstantPoolEntry(reader));
 			}
+
+            this.access_flags = (ClassAccessFlags)reader.ReadUShort();
+            this.this_class = reader.ReadUShort();
+            this.super_class = reader.ReadUShort();
+
+            this.interfaces_count = reader.ReadUShort();
+			for (int i = 0; i < interfaces_count; i++)
+			{
+                this.interfaces.Add(reader.ReadUShort());
+			}
+
+            this.fields_count = reader.ReadUShort();
+			for (int i = 0; i < fields_count; i++)
+			{
+
+			}
 		}
 		#region File Reading
 		protected virtual ConstantPoolInfo ReadConstantPoolEntry(ClassBinaryReader reader)
@@ -81,5 +98,13 @@ namespace JavaRebyte.Core.ClassFile
 			}
 		}
         #endregion
+
+        public ConstantClassInfo GetInterface(int index)
+        {
+            if(index < 0 || index >= interfaces_count)
+                return null;
+
+            return (ConstantClassInfo)constant_pool[interfaces[index]];
+        }
     }
 }

@@ -9,7 +9,7 @@ namespace JavaRebyte.Core.ClassFile
 	{
 		protected List<ConstantPoolInfo> m_container = new List<ConstantPoolInfo>();
 
-		public ConstantPool() {}
+		public int Count => m_container.Count;
 
 		public ConstantPoolInfo this[int index]
 		{ 
