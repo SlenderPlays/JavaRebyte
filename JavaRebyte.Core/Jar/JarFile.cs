@@ -11,18 +11,18 @@ namespace JavaRebyte.Core.Jar
 {
 	public class JarFile: IDisposable
 	{
-		public string jarFilePath { get; private set; }
+		public string JarFilePath { get; private set; }
 
 		public List<JavaClassFile> JavaClassFiles = new List<JavaClassFile>();
 		public List<JarEntry> AuxiliaryFiles = new List<JarEntry>();
 		
-		private ZipArchive m_archiveFile;
+		private readonly ZipArchive m_archiveFile;
 
 		public JarFile(string jarFilePath)
 		{
 			if(File.Exists(jarFilePath) && jarFilePath.EndsWith(".jar"))
 			{
-				this.jarFilePath = jarFilePath;
+				this.JarFilePath = jarFilePath;
 				m_archiveFile = ZipFile.OpenRead(jarFilePath);
 				
 				var fileEntries = m_archiveFile.Entries
@@ -66,10 +66,8 @@ namespace JavaRebyte.Core.Jar
 					if (!item.IsRead)
 						item.ReadJarAsync().Wait();
 
-					using (var entryStream = entryFile.Open())
-					{
-						entryStream.Write(item.byteContents, 0, item.byteContents.Length);
-					}
+					using var entryStream = entryFile.Open();
+					entryStream.Write(item.byteContents, 0, item.byteContents.Length);
 				}
 			}
 
@@ -79,23 +77,18 @@ namespace JavaRebyte.Core.Jar
 
 		public void WriteToFile(string path)
 		{
-			using (var memoryStream = WriteToMemory())
-			{
-				using (var fileStream = new FileStream(path, FileMode.Create))
-				{
-					memoryStream.Seek(0, SeekOrigin.Begin);
-					memoryStream.CopyTo(fileStream);
-				}
-			}
+			using var memoryStream = WriteToMemory();
+			using var fileStream = new FileStream(path, FileMode.Create);
+
+			memoryStream.Seek(0, SeekOrigin.Begin);
+			memoryStream.CopyTo(fileStream);
 		}
 
 		public void WriteToStream(Stream outputStream)
 		{
-			using (var memoryStream = WriteToMemory())
-			{
-				memoryStream.Seek(0, SeekOrigin.Begin);
-				memoryStream.CopyTo(outputStream);
-			}
+			using var memoryStream = WriteToMemory();
+			memoryStream.Seek(0, SeekOrigin.Begin);
+			memoryStream.CopyTo(outputStream);
 		}
 
 		/// <summary>

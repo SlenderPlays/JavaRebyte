@@ -36,29 +36,27 @@ namespace JavaRebyte.Core.ClassFile
 
         public DecompiledClassFile(byte[] byteContent)
 		{
-            using (MemoryStream ms = new MemoryStream(byteContent))
-            {
-                ClassBinaryReader reader = new ClassBinaryReader(ms, System.Text.Encoding.UTF8);
-                this.magic = reader.ReadUInt();
+			using MemoryStream ms = new MemoryStream(byteContent);
+			using ClassBinaryReader reader = new ClassBinaryReader(ms);
 
-                if (magic != 0xCAFEBABE)
-                    throw new DecompilationException($"The provided file isn't a class file, or is corrupted. Expected magic bytes: 'CAFEBABE', got {magic:X}");
+			this.magic = reader.ReadUInt();
 
-                this.minor_version = reader.ReadUShort();
-                this.major_version = reader.ReadUShort();
-                this.constant_pool_count = reader.ReadUShort();
+			if (magic != 0xCAFEBABE)
+				throw new DecompilationException($"The provided file isn't a class file, or is corrupted. Expected magic bytes: 'CAFEBABE', got {magic:X}");
 
-				// Constant pool start at index 1, for reasons unknown to all
-				// constant_pool.Add(new ConstantPoolInfo());
-				for (int i = 1; i < constant_pool_count; i++)
-				{
-                    constant_pool.Add(ReadConstantPoolEntry(reader));
-				}
+			this.minor_version = reader.ReadUShort();
+			this.major_version = reader.ReadUShort();
+			this.constant_pool_count = reader.ReadUShort();
 
-            }
+			// Constant pool start at index 1, for reasons unknown to all
+			// constant_pool.Add(new ConstantPoolInfo());
+			for (int i = 1; i < constant_pool_count; i++)
+			{
+				constant_pool.Add(ReadConstantPoolEntry(reader));
+			}
 		}
-        #region File Reading
-        protected virtual ConstantPoolInfo ReadConstantPoolEntry(ClassBinaryReader reader)
+		#region File Reading
+		protected virtual ConstantPoolInfo ReadConstantPoolEntry(ClassBinaryReader reader)
 		{
             ConstantPoolTag tag = (ConstantPoolTag)reader.ReadByte();
             switch (tag)

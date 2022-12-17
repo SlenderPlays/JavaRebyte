@@ -15,15 +15,13 @@ namespace JavaRebyte.Core.ClassFile.Util
 	/// <br/>
 	/// Base implementaion can be found at https://source.dot.net/#System.Private.CoreLib/src/libraries/System.Private.CoreLib/src/System/IO/BinaryReader.cs
 	/// </summary>
-	public class ClassBinaryReader
+	public class ClassBinaryReader: IDisposable
 	{
 		protected Stream m_stream;
-		private Encoding m_encoding;
 
-		public ClassBinaryReader(Stream stream, Encoding encoding)
+		public ClassBinaryReader(Stream stream)
 		{
 			this.m_stream = stream;
-			this.m_encoding = encoding;
 		}
 
 		public virtual ushort	ReadUShort()	=> BinaryPrimitives.ReadUInt16BigEndian(InternalRead(2));
@@ -75,6 +73,12 @@ namespace JavaRebyte.Core.ClassFile.Util
 			return buffer;
 		}
 
+		public string ReadString()
+		{
+			ushort len = ReadUShort();
+			return ModifiedUTF8.GetString(ReadBytes(len));
+		}
+
 		protected virtual ReadOnlySpan<byte> InternalRead(int numBytes)
 		{
 			byte[] buffer = new byte[numBytes];
@@ -86,10 +90,9 @@ namespace JavaRebyte.Core.ClassFile.Util
 			return new ReadOnlySpan<byte>(buffer);
 		}
 
-		public string ReadString()
+		public void Dispose()
 		{
-			ushort len = ReadUShort();
-			return ModifiedUTF8.GetString(ReadBytes(len));
+			((IDisposable)m_stream).Dispose();
 		}
 	}
 }
